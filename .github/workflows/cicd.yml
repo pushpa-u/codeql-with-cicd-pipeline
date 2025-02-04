@@ -3,7 +3,7 @@ name: Deploy the React application
 on:
   push:
     branches:
-      - master
+      # - master
 
 
 env:
