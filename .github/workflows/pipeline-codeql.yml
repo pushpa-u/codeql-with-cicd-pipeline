@@ -47,6 +47,21 @@ jobs:
       with:
         category: "/language:${{matrix.language}}"
 
+    - name: Check for critical CodeQL alerts
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        CRITICAL_ISSUES=$(gh api repos/${{ github.repository }}/code-scanning/alerts \
+          --jq '.[] | select(.rule.severity=="critical")' | wc -l)
+        
+        if [[ "$CRITICAL_ISSUES" -gt 0 ]]; then
+          echo "CRITICAL security vulnerabilities found: $CRITICAL_ISSUES"
+          exit 1 
+        else
+          echo "✅ No critical security vulnerabilities found."
+        fi
+
+
   Build-Deploy:
     needs: analyze
     runs-on: ubuntu-latest
