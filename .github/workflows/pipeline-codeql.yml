@@ -52,7 +52,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         CRITICAL_ISSUES=$(gh api repos/${{ github.repository }}/code-scanning/alerts \
-          --jq '.[] | select(.rule.severity=="critical")' | wc -l)
+          --jq '.[] | select(.rule.severity=="Critical")' | wc -l)
         
         if [[ "$CRITICAL_ISSUES" -gt 0 ]]; then
           echo "CRITICAL security vulnerabilities found: $CRITICAL_ISSUES"
