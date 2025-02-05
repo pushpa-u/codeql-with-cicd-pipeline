@@ -52,7 +52,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         CRITICAL_ISSUES=$(gh api repos/pushpa-u/codeql-with-cicd-pipeline/code-scanning/alerts \
-          --jq '.[] | select(.state=="open" and .rule.security_severity_level=="critical")' | wc -l)
+  --jq '.[] | select(.state=="open" and 
+          (.rule.security_severity_level=="critical" or 
+           .rule.security_severity_level=="high" or 
+           .rule.security_severity_level=="medium"))' | wc -l)
   
         if [[ "$CRITICAL_ISSUES" -gt 0 ]]; then
           echo "CRITICAL security vulnerabilities found: $CRITICAL_ISSUES"
@@ -61,7 +64,7 @@ jobs:
           echo "✅ No critical security vulnerabilities found."
         fi
 
-        
+
   Build-Deploy:
     needs: analyze
     runs-on: ubuntu-latest
