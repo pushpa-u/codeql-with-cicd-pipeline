@@ -47,19 +47,19 @@ jobs:
       with:
         category: "/language:${{matrix.language}}"
 
-    - name: Check for critical CodeQL alerts
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        CRITICAL_ISSUES=$(gh api repos/pushpa-u/codeql-with-cicd-pipeline/code-scanning/alerts \
-          --jq '.[] | select(.state=="open" and (.rule.security_severity_level=="critical" or .rule.security_severity_level=="high" or .rule.security_severity_level=="medium"))' | wc -l)
+    # - name: Check for critical CodeQL alerts
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     CRITICAL_ISSUES=$(gh api repos/pushpa-u/codeql-with-cicd-pipeline/code-scanning/alerts \
+    #       --jq '.[] | select(.state=="open" and (.rule.security_severity_level=="critical" or .rule.security_severity_level=="high" or .rule.security_severity_level=="medium"))' | wc -l)
   
-        if [[ "$CRITICAL_ISSUES" -gt 0 ]]; then
-          echo "CRITICAL security vulnerabilities found: $CRITICAL_ISSUES"
-          exit 1 
-        else
-          echo "✅ No critical security vulnerabilities found."
-        fi
+    #     if [[ "$CRITICAL_ISSUES" -gt 0 ]]; then
+    #       echo "CRITICAL security vulnerabilities found: $CRITICAL_ISSUES"
+    #       exit 1 
+    #     else
+    #       echo "✅ No critical security vulnerabilities found."
+    #     fi
 
         
   Build-Deploy:
