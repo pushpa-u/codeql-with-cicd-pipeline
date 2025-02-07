@@ -48,7 +48,7 @@ jobs:
         category: "/language:${{matrix.language}}"
 
     - name: Generate Security Report
-      uses: rsdmike/github-security-report-action@v2
+      uses: rsdmike/github-security-report-action@v3.0.4
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         sarifReportDir: .  # Default SARIF report directory (change if needed)
