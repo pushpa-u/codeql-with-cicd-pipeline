@@ -50,7 +50,7 @@ jobs:
     - name: Generate Security Report
       uses: rsdmike/github-security-report-action@v3.0.4
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         sarifReportDir: .  # Default SARIF report directory (change if needed)
         outputDir: reports  # Save PDF report to 'reports/' folder
         template: report    # Options: summary, report, report_sca
