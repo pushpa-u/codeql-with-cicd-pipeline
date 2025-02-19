@@ -48,7 +48,7 @@ jobs:
             echo "service4=true" >> $GITHUB_OUTPUT
           fi    
 
-  ServiceA-Build and Deploy:
+  ServiceA-Build-Deploy:
     needs: Detect-Changes
     if: needs.Detect-Changes.outputs.service1-service == 'true'
     runs-on: ubuntu-latest
@@ -71,7 +71,7 @@ jobs:
           # docker build -t pushpau/$DOCKER_REPO_UI:$new_string .
           # docker push pushpau/$DOCKER_REPO_UI:$new_string
 
-  ServiceB-Build and Deploy:
+  ServiceB-Build-Deploy:
     needs: Detect-Changes
     if: needs.Detect-Changes.outputs.service2-service == 'true'
     runs-on: ubuntu-latest
@@ -94,7 +94,7 @@ jobs:
           # docker build -t pushpau/$DOCKER_REPO_UI:$new_string .
           # docker push pushpau/$DOCKER_REPO_UI:$new_string
 
-  ServiceC-Build and Deploy:
+  ServiceC-Build-Deploy:
     needs: Detect-Changes
     if: needs.Detect-Changes.outputs.service3-service == 'true'
     runs-on: ubuntu-latest
@@ -117,7 +117,7 @@ jobs:
           # docker build -t pushpau/$DOCKER_REPO_UI:$new_string .
           # docker push pushpau/$DOCKER_REPO_UI:$new_string
 
-  ServiceD-Build and Deploy:
+  ServiceD-Build-Deploy:
     needs: Detect-Changes
     if: needs.Detect-Changes.outputs.service4-service == 'true'
     runs-on: ubuntu-latest
