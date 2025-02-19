@@ -1,0 +1,141 @@
+name: Build and Push the Docker images 
+on:
+  push:
+    branches:
+      - feature/single-pipeline
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_REPO_UI: "codeql"
+
+  DOCKERFILEPATH_SERVICE1: "./service1"
+  DOCKERFILEPATH_SERVICE2: "./service2"
+  DOCKERFILEPATH_SERVICE3: "./service3"
+  DOCKERFILEPATH_SERVICE4: "./service4"
+
+
+jobs: 
+
+  Detect-Changes: 
+    name: Detect the modified folders
+    runs-on: ubuntu-latest
+    outputs:
+      service1-service: ${{ steps.folder-filter.outputs.service1 }}
+      service2-service: ${{ steps.folder-filter.outputs.service2 }}
+      service3-service: ${{ steps.folder-filter.outputs.service3 }}
+      service4-service: ${{ steps.folder-filter.outputs.service4 }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  
+
+      - name: Check modified files and folders
+        id: folder-filter
+        run: |
+          echo "Checking for changes..."
+          if git diff --name-only HEAD^ HEAD | grep -q '^service1/'; then
+            echo "service1=true" >> $GITHUB_OUTPUT
+          fi
+          if git diff --name-only HEAD^ HEAD | grep -q '^service2/'; then
+            echo "service2=true" >> $GITHUB_OUTPUT
+          fi
+          if git diff --name-only HEAD^ HEAD | grep -q '^service3/'; then
+            echo "service3=true" >> $GITHUB_OUTPUT
+          fi
+          if git diff --name-only HEAD^ HEAD | grep -q '^service4/'; then
+            echo "service4=true" >> $GITHUB_OUTPUT
+          fi    
+
+  Service1 - Build and Deploy:
+    needs: Detect-Changes
+    if: needs.Detect-Changes.outputs.service1-service == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker CLI
+        uses: docker/setup-buildx-action@v1 
+        
+  
+      - name: Login the docker, Build and Push the Image
+        run: |
+          cd "$DOCKERFILEPATH_SERVICE1"
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_ACCESS_TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'$DOCKER_USERNAME'", "password": "'$DOCKER_PASSWORD'"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
+          input_string=$(curl -s -H "Authorization: Bearer $DOCKER_ACCESS_TOKEN" https://registry.hub.docker.com/v2/repositories/pushpau/$DOCKER_REPO_UI/tags | jq -r '.results | max_by(.last_updated) | .name')
+          number=$(echo "$input_string" | grep -oE '[0-9]+$') && new_number=$((number + 1)) && new_string=$(echo "$input_string" | sed "s/$number$/$new_number/")
+          # docker build -t pushpau/$DOCKER_REPO_UI:$new_string .
+          # docker push pushpau/$DOCKER_REPO_UI:$new_string
+
+  Service2 - Build and Deploy:
+    needs: Detect-Changes
+    if: needs.Detect-Changes.outputs.service2-service == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker CLI
+        uses: docker/setup-buildx-action@v1 
+        
+  
+      - name: Login the docker, Build and Push the Image
+        run: |
+          cd "$DOCKERFILEPATH_SERVICE2"
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_ACCESS_TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'$DOCKER_USERNAME'", "password": "'$DOCKER_PASSWORD'"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
+          input_string=$(curl -s -H "Authorization: Bearer $DOCKER_ACCESS_TOKEN" https://registry.hub.docker.com/v2/repositories/pushpau/$DOCKER_REPO_UI/tags | jq -r '.results | max_by(.last_updated) | .name')
+          number=$(echo "$input_string" | grep -oE '[0-9]+$') && new_number=$((number + 1)) && new_string=$(echo "$input_string" | sed "s/$number$/$new_number/")
+          # docker build -t pushpau/$DOCKER_REPO_UI:$new_string .
+          # docker push pushpau/$DOCKER_REPO_UI:$new_string
+
+  Service3 - Build and Deploy:
+    needs: Detect-Changes
+    if: needs.Detect-Changes.outputs.service3-service == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker CLI
+        uses: docker/setup-buildx-action@v1 
+        
+  
+      - name: Login the docker, Build and Push the Image
+        run: |
+          cd "$DOCKERFILEPATH_SERVICE3"
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_ACCESS_TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'$DOCKER_USERNAME'", "password": "'$DOCKER_PASSWORD'"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
+          input_string=$(curl -s -H "Authorization: Bearer $DOCKER_ACCESS_TOKEN" https://registry.hub.docker.com/v2/repositories/pushpau/$DOCKER_REPO_UI/tags | jq -r '.results | max_by(.last_updated) | .name')
+          number=$(echo "$input_string" | grep -oE '[0-9]+$') && new_number=$((number + 1)) && new_string=$(echo "$input_string" | sed "s/$number$/$new_number/")
+          # docker build -t pushpau/$DOCKER_REPO_UI:$new_string .
+          # docker push pushpau/$DOCKER_REPO_UI:$new_string
+
+  Service4 - Build and Deploy:
+    needs: Detect-Changes
+    if: needs.Detect-Changes.outputs.service4-service == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker CLI
+        uses: docker/setup-buildx-action@v1 
+        
+  
+      - name: Login the docker, Build and Push the Image
+        run: |
+          cd "$DOCKERFILEPATH_SERVICE4"
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_ACCESS_TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'$DOCKER_USERNAME'", "password": "'$DOCKER_PASSWORD'"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
+          input_string=$(curl -s -H "Authorization: Bearer $DOCKER_ACCESS_TOKEN" https://registry.hub.docker.com/v2/repositories/pushpau/$DOCKER_REPO_UI/tags | jq -r '.results | max_by(.last_updated) | .name')
+          number=$(echo "$input_string" | grep -oE '[0-9]+$') && new_number=$((number + 1)) && new_string=$(echo "$input_string" | sed "s/$number$/$new_number/")
+          # docker build -t pushpau/$DOCKER_REPO_UI:$new_string .
+          # docker push pushpau/$DOCKER_REPO_UI:$new_string
